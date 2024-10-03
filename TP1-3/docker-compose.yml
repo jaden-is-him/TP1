@@ -1,0 +1,71 @@
+version: '3'
+networks:
+ bridge:
+services:
+  web:
+    container_name: server-web
+    image: nginx
+    networks:
+      bridge:
+    ports:
+      - "8082:80"
+    restart: always
+  db:
+    container_name: serv_db
+    image: mysql:5
+    networks:
+      bridge:
+    ports:
+      - "5000:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_USER: "nigaash"
+      MYSQL_PASSWORD: "nigaash2004"
+      MYSQL_DATABASE: "db1"
+    volumes:
+        - db_data:/var/lib/mysql
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    networks:
+      bridge:
+    ports:
+      - "9005:8083"
+    environment:
+      JENKINS_OPTS: --httpPort=8083
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 1G
+    volumes:
+      - jenkins_home:/var/jenkins_home
+
+  sonarqube:
+    image: sonarqube:lts
+    container_name: sonarqube
+    networks:
+      bridge:
+    ports:
+      - "9006:9000"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 1G
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_temp:/opt/sonarqube/temp
+
+
+
+volumes:
+  db_data:
+  jenkins_home:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  sonarqube_temp:

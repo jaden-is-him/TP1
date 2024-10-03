@@ -1,0 +1,14 @@
+FROM centos:8
+RUN cd /etc/yum.repos.d/
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+RUN yum -y update && yum -y install httpd httpd-tools net-tools
+RUN echo "<h1><b>THE IS HELL FROM JADEN & NIGAASH</b></h1>" > /var/www/html/index.html
+EXPOSE 80
+#lancer le server en premier plan
+CMD ["/usr/sbin/httpd","-D","FOREGROUND"]
+#create image from docker file
+#docker build -f dockerfile -t partie_2 .
+#run container
+#docker run -d - p 8080:80 --name web nigaash partie_2
+
